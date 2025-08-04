@@ -1,0 +1,76 @@
+{
+  "properties": [
+    {
+      "name": "jwt.auth.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable JWT authentication.",
+      "defaultValue": true
+    },
+    {
+      "name": "jwt.auth.secret",
+      "type": "java.lang.String",
+      "description": "JWT secret key for signing tokens.",
+      "defaultValue": "mySecretKey123456789012345678901234567890123456789012345678901234567890"
+    },
+    {
+      "name": "jwt.auth.issuer",
+      "type": "java.lang.String",
+      "description": "JWT issuer name.",
+      "defaultValue": "jwt-auth-service"
+    },
+    {
+      "name": "jwt.auth.access-token-expiration",
+      "type": "java.time.Duration",
+      "description": "Access token expiration time.",
+      "defaultValue": "30m"
+    },
+    {
+      "name": "jwt.auth.refresh-token-expiration",
+      "type": "java.time.Duration",
+      "description": "Refresh token expiration time.",
+      "defaultValue": "7d"
+    },
+    {
+      "name": "jwt.auth.redis-key-prefix",
+      "type": "java.lang.String",
+      "description": "Redis key prefix for JWT tokens.",
+      "defaultValue": "jwt:"
+    },
+    {
+      "name": "jwt.auth.enable-refresh-token",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable refresh token functionality.",
+      "defaultValue": true
+    },
+    {
+      "name": "jwt.auth.enable-blacklist",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable token blacklist functionality.",
+      "defaultValue": true
+    },
+    {
+      "name": "jwt.auth.max-concurrent-sessions",
+      "type": "java.lang.Integer",
+      "description": "Maximum concurrent sessions per user (0 for unlimited).",
+      "defaultValue": 0
+    },
+    {
+      "name": "jwt.auth.token-header-name",
+      "type": "java.lang.String",
+      "description": "HTTP header name for JWT token.",
+      "defaultValue": "Authorization"
+    },
+    {
+      "name": "jwt.auth.token-prefix",
+      "type": "java.lang.String",
+      "description": "Token prefix in HTTP header.",
+      "defaultValue": "Bearer "
+    },
+    {
+      "name": "jwt.auth.enable-default-controller",
+      "type": "java.lang.Boolean",
+      "description": "Whether to enable default authentication controller.",
+      "defaultValue": false
+    }
+  ]
+}

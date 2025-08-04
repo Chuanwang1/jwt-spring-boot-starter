@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: jwt-spring-boot-starter-test
+  redis:
+    data:
+      host: localhost
+      port: 6380
+    # 使用嵌入式Redis，不需要密码
+logging:
+  level:
+    org.springframework: WARN
+    magiclc.jwtspringbootstarter: DEBUG
+  pattern:
+    console: "%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"
+
+
+jwt:
+  auth:
+    enabled: true
+    secret: testSecretKey123456789012345678901234567890123456789012345678901234567890
+    issuer: test-jwt-service
+    access-token-expiration: 5m
+    refresh-token-expiration: 10m
+    redis-key-prefix: "test-jwt:"
+    enable-refresh-token: true
+    enable-blacklist: true
+    max-concurrent-sessions: 3
+    token-header-name: Authorization
+    token-prefix: "Bearer "
+    enable-default-controller: false
+

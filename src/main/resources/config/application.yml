@@ -1,0 +1,36 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: jwt-spring-boot-starter
+    version: 0.0.1
+    description: jwt-spring-boot-starter
+  data:
+    redis:
+      host: localhost
+      password: 8888
+      port: 6379
+
+jwt:
+  auth:
+    # JWT 密钥 - 建议使用至少 256 位的强密钥
+    secret: mySecretKey123456789012345678901234567890123456789012345678901234567890
+    # JWT 发行者
+    issuer: jwt-auth-service
+    # 访问令牌过期时间
+    access-token-expiration: 30m
+    # 刷新令牌过期时间
+    refresh-token-expiration: 7d
+    # Redis 键前缀
+    redis-key-prefix: "jwt:"
+    # 是否启用刷新令牌
+    enable-refresh-token: true
+    # 是否启用令牌黑名单
+    enable-blacklist: true
+    # 最大同时在线用户数（0表示无限制）
+    max-concurrent-sessions: 0
+    # 令牌头名称
+    token-header-name: Authorization
+    # 令牌前缀
+    token-prefix: "Bearer "
