@@ -41,8 +41,7 @@ public class JwtSecurityConfig {
     @ConditionalOnMissingBean(SecurityFilterChain.class)
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // 禁用CSRF（JWT无状态，不需要CSRF保护）
-                .csrf(AbstractHttpConfigurer::disable)
+                // 保持CSRF保护为默认启用
 
                 // 配置CORS
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
