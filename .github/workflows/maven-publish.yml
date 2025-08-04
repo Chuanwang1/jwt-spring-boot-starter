@@ -2,12 +2,11 @@
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
 # This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-name: Build and Deploy Docker Image
+name: Build and Deploy
 
 on:
   release:
     types: [created]
-  # 添加手动触发支持
   workflow_dispatch:
 
 jobs:
@@ -42,7 +41,7 @@ jobs:
         fi
 
     # 登录到 GitHub Packages Docker Registry
-    - name: Log in to GitHub Packages Docker Registry
+    - name: Log in to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     # 构建 Docker 镜像
@@ -63,10 +62,3 @@ jobs:
       run: mvn deploy -s ${{ github.workspace }}/settings.xml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    # 现在 target 目录已存在，可以安全构建 Docker
-    - name: Build Docker Image
-      run: docker build -t jwt-spring-boot-starter:latest .
-      
-    - name: Publish to GitHub Packages
-      run: mvn deploy
