@@ -7,7 +7,7 @@
 
     <groupId>io.github.magiclc</groupId>
     <artifactId>jwt-spring-boot-starter</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0.1</version>
     <packaging>jar</packaging>
 
     <name>JWT Spring Boot Starter</name>
