@@ -2,12 +2,11 @@
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
 # This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
-name: Build and Deploy Docker Image
+name: Build and Deploy
 
 on:
   release:
     types: [created]
-  # 添加手动触发支持
   workflow_dispatch:
 
 jobs:
@@ -32,17 +31,20 @@ jobs:
     - name: Build with Maven
       run: mvn -B clean package -DskipTests
       
-    # 验证JAR文件是否生成
+    # 验证JAR文件是否生成（修复后的版本）
     - name: Verify JAR file exists
       run: |
         ls -la target/
-        if [ ! -f "target/*.jar" ]; then
-          echo "JAR file not found in target directory"
+        JAR_COUNT=$(ls target/*.jar 2>/dev/null | wc -l)
+        if [ "$JAR_COUNT" -gt 0 ]; then
+          echo "JAR file(s) found successfully: $JAR_COUNT"
+        else
+          echo "No JAR files found in target directory"
           exit 1
         fi
 
     # 登录到 GitHub Packages Docker Registry
-    - name: Log in to GitHub Packages Docker Registry
+    - name: Log in to GitHub Container Registry
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
     # 构建 Docker 镜像
@@ -63,10 +65,3 @@ jobs:
       run: mvn deploy -s ${{ github.workspace }}/settings.xml
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-    # 现在 target 目录已存在，可以安全构建 Docker
-    - name: Build Docker Image
-      run: docker build -t jwt-spring-boot-starter:latest .
-      
-    - name: Publish to GitHub Packages
-      run: mvn deploy
