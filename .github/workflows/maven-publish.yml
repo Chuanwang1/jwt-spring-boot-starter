@@ -1,15 +1,17 @@
 # This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
 # For more information see: https://github.com/actions/setup-java/blob/main/docs/advanced-usage.md#apache-maven-with-a-settings-path
 
-name: Maven Package
+# This workflow will build a package using Maven and then publish it to GitHub packages when a release is created
+name: Build and Deploy Docker Image
 
 on:
   release:
     types: [created]
+  # 添加手动触发支持
+  workflow_dispatch:
 
 jobs:
-  build:
-
+  build-and-deploy:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -17,18 +19,54 @@ jobs:
 
     steps:
     - uses: actions/checkout@v4
-    - name: Set up JDK 11
+    
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
-        server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
-        settings-path: ${{ github.workspace }} # location for the settings.xml file
+        server-id: github
+        settings-path: ${{ github.workspace }}/settings.xml
 
+    # 构建 Maven 项目生成 JAR 文件
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B clean package -DskipTests
+      
+    # 验证JAR文件是否生成
+    - name: Verify JAR file exists
+      run: |
+        ls -la target/
+        if [ ! -f "target/*.jar" ]; then
+          echo "JAR file not found in target directory"
+          exit 1
+        fi
 
-    - name: Publish to GitHub Packages Apache Maven
-      run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
+    # 登录到 GitHub Packages Docker Registry
+    - name: Log in to GitHub Packages Docker Registry
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+    # 构建 Docker 镜像
+    - name: Build Docker Image
+      run: |
+        docker build -t jwt-spring-boot-starter:latest .
+        docker tag jwt-spring-boot-starter:latest ghcr.io/${{ github.repository_owner }}/jwt-spring-boot-starter:latest
+        docker tag jwt-spring-boot-starter:latest ghcr.io/${{ github.repository_owner }}/jwt-spring-boot-starter:${{ github.sha }}
+
+    # 推送 Docker 镜像到 GitHub Packages
+    - name: Push Docker Image to GitHub Packages
+      run: |
+        docker push ghcr.io/${{ github.repository_owner }}/jwt-spring-boot-starter:latest
+        docker push ghcr.io/${{ github.repository_owner }}/jwt-spring-boot-starter:${{ github.sha }}
+
+    # 发布到 GitHub Packages Maven Repository
+    - name: Publish to GitHub Packages
+      run: mvn deploy -s ${{ github.workspace }}/settings.xml
       env:
-        GITHUB_TOKEN: ${{ github.token }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    # 现在 target 目录已存在，可以安全构建 Docker
+    - name: Build Docker Image
+      run: docker build -t jwt-spring-boot-starter:latest .
+      
+    - name: Publish to GitHub Packages
+      run: mvn deploy
