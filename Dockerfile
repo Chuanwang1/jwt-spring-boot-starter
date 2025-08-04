@@ -3,8 +3,8 @@ FROM openjdk:17-jdk-slim
 # 设置工作目录
 WORKDIR /app
 
-# 复制JAR文件
-COPY target/*.jar app.jar
+# 复制确切的JAR文件
+COPY target/jwt-spring-boot-starter-*.jar app.jar
 
 # 创建非root用户
 RUN addgroup --system spring && \
